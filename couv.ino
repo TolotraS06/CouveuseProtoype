@@ -3,12 +3,18 @@
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h>
 
+/**
+     constante      
+*/
 #define MAX_TEMP 37.5
 #define MAX_HUM  50
 
 #define LUM_PORT 10
 #define DHT_PORT 5
 
+/**
+     variable et objet
+*/
 DHT dht (DHT_PORT,DHT11);
 LiquidCrystal_I2C lcd (0x27,16,2);
 
@@ -16,9 +22,11 @@ float hum_ = NAN;
 float temp_= NAN;
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(LUM_PORT,OUTPUT);
 
+/**
+    initialisation de lcd
+*/
   lcd.init();
   lcd.begin(16,2,13);
   lcd.backlight ();
@@ -29,11 +37,14 @@ void setup() {
 }
 
 void loop() {
- // put your main code here, to run repeatedly:
   Dht_sensor();
   display_data();
 }
 
+/**
+    lecture des donnees (temperature et humidite) du dht
+    et declenchement du relays
+*/
 void Dht_sensor (){
     temp_ = dht.readTemperature (false);
     hum_ = dht.readHumidity ();
@@ -52,6 +63,9 @@ void Dht_sensor (){
     } 
 }
 
+/**
+    affichage des donnees du dht sur le LCD      
+*/
 void display_data (){
    for (int i = 0; i < 10; i++)  { 
 
