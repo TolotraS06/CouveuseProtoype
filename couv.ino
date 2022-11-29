@@ -1,15 +1,16 @@
 
-#include <DHT.h>
 #include <LiquidCrystal_I2C.h>
+#include <DHT.h>
 #include <Wire.h>
 
 /**
      constante      
 */
 #define MAX_TEMP 37.5
+#define MIN_TEMP 35
 #define MAX_HUM  50
 
-#define LUM_PORT 10
+#define RELAYS 10
 #define DHT_PORT 5
 
 /**
@@ -20,9 +21,14 @@ LiquidCrystal_I2C lcd (0x27,16,2);
 
 float hum_ = NAN;
 float temp_= NAN;
+float ltemp_ = temp_;
+float lhum_ = hum_;
+
+bool  lightUP_ = false;
+
 
 void setup() {
-  pinMode(LUM_PORT,OUTPUT);
+  pinMode(RELAYS,OUTPUT);
 
 /**
     initialisation de lcd
@@ -39,6 +45,8 @@ void setup() {
 void loop() {
   Dht_sensor();
   display_data();
+  if (temp_ != NAN)  
+    light_state();   
 }
 
 /**
@@ -54,43 +62,49 @@ void Dht_sensor (){
     
     Serial.print(" hum: ");
     Serial.println(hum_);
-    
-    if (temp_ != NAN)  {                     
-      if (temp_ > MAX_TEMP)
-        digitalWrite (LUM_PORT,LOW);
-      else
-        digitalWrite (LUM_PORT,HIGH);
-    } 
+}
+
+/**
+     declenchement du relays
+*/
+void light_state (){
+    if (((temp_ - 2) > MIN_TEMP) && ((temp_ + 2) > MAX_TEMP) && lightUP_){
+      digitalWrite(RELAYS,LOW);
+      lightUP_ = false;                        
+    }
+    else if (((temp_ - 2) <= MIN_TEMP) && ((temp_ + 2) < MAX_TEMP ) && !lightUP_){
+      digitalWrite(RELAYS,HIGH);
+      lightUP_ = true;            
+    }
 }
 
 /**
     affichage des donnees du dht sur le LCD      
 */
 void display_data (){
-   for (int i = 0; i < 10; i++)  { 
-
-      if (temp_ != NAN){
-        lcd.setCursor(0, 0);
-        lcd.print("temp : ");
-        lcd.print (temp_);
-      }
-      else{
-        lcd.setCursor(0,0);
-        lcd.print("TEMP READ ERROR");
-      }
-      
-      if (hum_ != NAN){                 
-        lcd.setCursor(0,1);
-        lcd.print("hum  : ");
-        lcd.print (hum_);   
-      } 
-      else{
-        lcd.setCursor(0,1);
-        lcd.print("HUM READ ERROR");
-      }
-      delay (100);
-      
+          
+  if (hum_ == NAN || temp_ == NAN){
+     lcd.clear ();
+     lcd.setCursor(0,0);
+     lcd.print("ERREUR LORS DE ");
+     lcd.setCursor(0,1);    
+     lcd.print("LA LECTURE");                        
+  }
+  else {
+    if (ltemp_ != temp_){
+      lcd.setCursor(0, 0);
+      lcd.print("temp : ");
+      lcd.print (temp_);    
     }
+  
+    if (lhum_ != hum_){        
+      lcd.setCursor(0,1);
+      lcd.print("hum  : ");
+      lcd.print (hum_);     
+    } 
+  }    
+      
+  delay(1000);
 }
 
 
