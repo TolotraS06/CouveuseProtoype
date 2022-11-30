@@ -19,8 +19,8 @@
 DHT dht (DHT_PORT,DHT11);
 LiquidCrystal_I2C lcd (0x27,16,2);
 
-float hum_ = NAN;
-float temp_= NAN;
+float hum_ = 0;
+float temp_= 0;
 float ltemp_ = temp_;
 float lhum_ = hum_;
 
