@@ -93,7 +93,9 @@ void display_data (){
      lcd.setCursor(0,0);
      lcd.print("ERREUR LORS DE ");
      lcd.setCursor(0,1);    
-     lcd.print("LA LECTURE");                        
+     lcd.print("LA LECTURE");  
+     delay (2000);
+     return;                       
   }
   else {
     if (ltemp_ != temp_){
@@ -109,7 +111,7 @@ void display_data (){
     } 
   }    
       
-  delay(1000);
+  delay(2000);
 }
 
 
