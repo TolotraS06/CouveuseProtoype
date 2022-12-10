@@ -1,3 +1,5 @@
+#include <DHT.h>
+
 
 #include <LiquidCrystal_I2C.h>
 #include <DHT.h>
@@ -6,9 +8,10 @@
 /**
      constante      
 */
-#define MAX_TEMP 37.5
-#define MIN_TEMP 35
-#define MAX_HUM  50
+#define MAX_TEMP 37.9
+#define MIN_TEMP 37
+#define MAX_HUM  70
+#define MIN_HUM  50
 
 #define RELAYS 10
 #define DHT_PORT 5
@@ -68,14 +71,16 @@ void Dht_sensor (){
      declenchement du relays
 */
 void light_state (){
-    if (((temp_ - 2) > MIN_TEMP) && ((temp_ + 2) > MAX_TEMP) && lightUP_){
+    if (((temp_ - 2) > MIN_TEMP) && ((temp_ + 2) > MAX_TEMP) && lightUP_ || ((hum_ - 10) <= MIN_HUM) && ((hum_ + 10) < MAX_HUM ))
+    {
       digitalWrite(RELAYS,LOW);
       lightUP_ = false;                        
     }
-    else if (((temp_ - 2) <= MIN_TEMP) && ((temp_ + 2) < MAX_TEMP ) && !lightUP_){
+    else if (((temp_ - 2) <= MIN_TEMP) && ((temp_ + 2) < MAX_TEMP ) && !lightUP_ || ((hum_ - 10) > MIN_HUM) && ((hum_ + 10) > MAX_HUM))
+    {
       digitalWrite(RELAYS,HIGH);
       lightUP_ = true;            
-    }
+    }  
 }
 
 /**
