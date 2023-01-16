@@ -9,7 +9,7 @@
      constante      
 */
 #define MAX_TEMP 37.9
-#define MIN_TEMP 37
+#define MIN_TEMP 37.7
 #define MAX_HUM  70
 #define MIN_HUM  50
 
@@ -46,32 +46,11 @@ void setup() {
 }
 
 void loop() {
-  Dht_sensor();
-  display_data();
-  if (temp_ != NAN)  
-    light_state();   
-}
-
-/**
-    lecture des donnees (temperature et humidite) du dht
-    et declenchement du relays
-*/
-void Dht_sensor (){
-    temp_ = dht.readTemperature (false);
-    hum_ = dht.readHumidity ();
-    
-    Serial.print("temp: ");
-    Serial.println(temp_);
-    
-    Serial.print(" hum: ");
-    Serial.println(hum_);
-}
 
 /**
      declenchement du relays
 */
-void light_state (){
-    if (((temp_ - 2) > MIN_TEMP) && ((temp_ + 2) > MAX_TEMP) && lightUP_ || ((hum_ - 10) <= MIN_HUM) && ((hum_ + 10) < MAX_HUM ))
+  if (((temp_ - 2) > MIN_TEMP) && ((temp_ + 2) > MAX_TEMP) && lightUP_ || ((hum_ - 10) <= MIN_HUM) && ((hum_ + 10) < MAX_HUM ))
     {
       digitalWrite(RELAYS,LOW);
       lightUP_ = false;                        
@@ -81,14 +60,11 @@ void light_state (){
       digitalWrite(RELAYS,HIGH);
       lightUP_ = true;            
     }  
-}
-
-/**
+    
+ /**
     affichage des donnees du dht sur le LCD      
-*/
-void display_data (){
-          
-  if (hum_ == NAN || temp_ == NAN){
+*/   
+   if (hum_ == NAN || temp_ == NAN){
      lcd.clear ();
      lcd.setCursor(0,0);
      lcd.print("ERREUR LORS DE ");
@@ -112,8 +88,23 @@ void display_data (){
   }    
       
   delay(2000);
+  
+/**
+    lecture des donnees (temperature et humidite) du dht
+    et declenchement du relays
+*/
+  if (temp_ != NAN){
+    temp_ = dht.readTemperature (false);
+    hum_ = dht.readHumidity ();
+    
+    Serial.print("temp: ");
+    Serial.println(temp_);
+    
+    Serial.print(" hum: ");
+    Serial.println(hum_);
+    
+  }   
 }
-
 
 
 
